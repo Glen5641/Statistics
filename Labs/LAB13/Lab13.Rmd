@@ -1,0 +1,97 @@
+---
+title: "Lab13"
+author: "Clayton Glenn"
+date: "April 20, 2018"
+output:
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 5
+    number_sections: yes
+    toc: yes
+  pdf_document: default
+  word_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#Task 1
+```{r}
+getwd()
+```
+
+#Task 2
+```{r}
+set.seed(13); x=rnorm(40,mean=15,sd=5)
+set.seed(20); y=rnorm(35,mean=10,sd=4)
+
+x;
+
+```
+Yes, we do not have enough evidence to reject the equality ratio 1:1.
+
+
+The null hypothesis would be
+\[H_0=0,\ \ \ \ \  H_n\neq0\]
+
+```{r}
+t.test(x,y, mu=0,var.equal=TRUE,conf.level = .95)
+```
+
+The null hypothesis of zero is definitely rejected.
+95% confidence intervals show (3.292 , 7.439).
+Mu-x is extremely likely greater than Mu-y.
+
+```{r}
+set.seed(13); x=rnorm(40,mean=15,sd=5)
+set.seed(20); y=rnorm(35,mean=14,sd=4)
+t.test(x,y,alt="greater")
+```
+The P-value shows that the even though, x is greater, the data can be expressed as equal data.
+The confidence intervals are (-.361 , Inf).
+
+
+#Task 3
+```{r}
+set.seed(50); x=rnorm(30,mean=50, sd=10)
+set.seed(40); y=rnorm(40,mean=55, sd=20)
+
+var.test(x,y) #1
+var.test(y,x) #2
+```
+The Ratios of the var.tests only differ as in the first test ratio is about 1/5 and the second test is its reciprocal. This is true since sigma1/sigma2 and the same data is flipped for both tests. The p-values are absolutely the same at .0000209. The confidence intervals are only based of F-value and since F values are reciprocals of eachother, the CI's are flipped and reciprocalled.
+
+```{r}
+var.test(x,y,alt="less")#3
+var.test(y,x,alt="greater")#4
+```
+
+The F-values are reciprocals, the P-values are the same, and the CI's are reciprocals and lie inbetween (0 , Inf).
+
+
+#Task 4
+Something is claimed a conjugate distribution if and only If the posterior distributions are in the same probability distribution family as the prior probability distribution.
+
+The posterior is algebraically equal to a Beta.
+
+\[P(q|s,f)=\frac{q^{s}(1-q)^{f}}{B(s+1,f+1)}\]
+
+Posterior hyperparameters are 5,7.
+
+The moment estimate is 1/2.
+
+The mean value of the posterior is 1/2.
+
+```{r}
+set.seed(19); x = rbinom(10,1,0.5)
+a = qbeta(1-.95/2,shape1=1,shape2=1)
+b = qbeta(.95/2,shape1=1,shape2=1)
+ci=c()
+ci[1]= 1-a*sqrt((.5*.5)/10)
+ci[2]= 1+a*sqrt((.5*.5)/10)
+ci
+```

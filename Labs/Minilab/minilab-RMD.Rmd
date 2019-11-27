@@ -1,0 +1,73 @@
+---
+title: "Minilab-RMD"
+author: "Clayton Glenn"
+date: "February 14, 2018"
+output: 
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 5
+    number_sections: yes
+    toc: yes
+  pdf_document: default
+  word_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Prove the Following
+
+##Prove
+
+###\[\mu _{Z}= E(Z)=0\]
+
+we know \[Z=\frac{X-\mu}{\sigma}\]
+and \[Z=\frac{1}{\sigma}(X-\mu)\]
+So we can rewrite the origional equation as \[E(Z)=\frac{1}{\sigma}\left [E(X)-\mu\right ]\]
+We know \[E(x)=\mu\]
+So Plug into equation and get \[E(Z)=\frac{1}{\sigma}\left [\mu-\mu\right ]\]
+Which \[\mu-\mu=0\]
+so we know \[\mu _{Z}=0\]
+
+##Prove
+
+###\[{\sigma_{z}^{2}}=1\]
+
+we know \[\sigma_{z}^{2}=E((z-\mu)^{2})=E(Z^{2})\]
+and we also know \[Z=\frac{X-\mu}{\sigma}\]
+We can plug in to get the equation \[\sigma_{z}^{2}=E\left [\left (  \frac{x-\mu}{\sigma} \right )^{2} \right ]\]
+and \[Z^{2}=\frac{1}{\sigma^{2}}(X-\mu)^{2}\]
+Which \[=\frac{1}{\sigma^{2}}E\left [ \left ( x-\mu \right )^{2} \right ]\]
+We know \[\sigma^2=\left ( x-\mu \right )^{2}\]
+So substitute in to reach the conclusion \[\frac{1}{\sigma^2}\sigma^2=\frac{\sigma^2}{\sigma^2}=1\]
+
+##Prove
+
+###\[M_{z}(t)={e^{\frac{1}{2}t^{2}}}\]
+
+We can assume that \[X\sim N(\mu,\sigma^2)\]
+and its moment generating function of \[M_{x}(t)=e^{\mu t+\frac{1}{2}t^2\sigma^2}\]
+Since we are trying to find M_{Z}(t) we can rewrite as \[M_{Z}(t)=e^{\mu_{Z} t+\frac{1}{2}t^2\sigma^2_{Z}}\]
+and from previous proofs, we can state that \[\mu_{z}=0\] and \[\sigma^2_Z=1\]
+Plug in the constants to the equation and get \[M_{Z}(t)=e^{0\cdot t}e^{\frac{1}{2}t^2\cdot 1}\]
+Which simplified gives us \[M_{Z}(t)=e^{\frac{1}{2}t^2}\]
+
+#Do the Following
+
+##Find 
+###\[KURT\left [ X\right]\]
+we know \[KURT\left [ X\right]=E(Z^4)\]
+so we need the fourth derivative of the z moment generating function
+\[M_{Z}(t)=e^{\frac{1}{2}t^2}\]
+\[M_{Z}'(t)=te^{\frac{1}{2}t^2}\]
+\[M_{Z}''(t)=(t^2+1)e^{\frac{1}{2}t^2}\]
+\[M_{Z}'''(t)=(t^3+3t)e^{\frac{1}{2}t^2}\]
+\[M_{Z}''''(t)=(t^4+6t^2+3)e^{\frac{1}{2}t^2}\]
+take the limit as t tends to zero
+\[\lim_{t=0}(t^4+6t^2+3)e^{\frac{1}{2}t^2}=(0+0+3)e^{0}=3\cdot 1=3\]
+
+##Kurtosis Explained
+Kurtosis is the interpretation of tail extremity or "Tailedness". Simply, Kurtosis is the Expected Value of the standardized data raised to the fourth power. Kurtosis also only measures outliers.

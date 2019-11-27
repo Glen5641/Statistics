@@ -1,0 +1,199 @@
+---
+title: "Lab14"
+author: "Clayton Glenn"
+date: "April 28, 2018"
+output:
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 5
+    number_sections: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Task1
+
+##Get Working Directory
+
+```{r}
+getwd()
+```
+
+
+
+#Task2
+
+##Least Squares Function
+
+```{r}
+mylsq=function(x,y){
+  ssxx=sum((x-mean(x))^2 )
+  ssxy=sum((x-mean(x))*(y-mean(y)))
+  b1hat=ssxy/ssxx
+  b0hat=mean(y)-b1hat*mean(x)
+    return(list(b0hat=b0hat,b1hat=b1hat))
+}
+```
+
+##Random Sample with Least Squares Line Applied
+
+```{r}
+x=1:20
+set.seed(29);y=4+6*x + rnorm(20,0,5)
+line = mylsq(x=x,y=y)
+plot(y~x, pch = 16, xlab = "X-Values", ylab = "Y-Values", main = "Random Sample")
+abline(line$b0hat, line$b1hat, lwd = 2, col = "Blue")
+```
+
+###Calculations
+
+Intercept of the Least Squares Line
+```{r}
+line$b0hat
+```
+
+Slope of the Least Squares Line
+```{r}
+line$b1hat
+```
+
+###Calculation Check
+
+```{r}
+slr=lm(y~x); summary(slr)$coefficients
+```
+According to the summary, the coefficients match the coefficients we calculated.
+
+
+
+#Task3
+
+##Predictions of Sample
+
+```{r}
+mypred = function(x, b0hat, b1hat){
+  y=b0hat+b1hat*x
+  y
+}
+plot(y~x, pch = 16, xlab = "X-Values", ylab = "Y-Values", main = "Random Sample")
+abline(line$b0hat, line$b1hat, lwd = 2, col = "Blue")
+points(x=15.5,y=mypred(15.5, line$b0hat, line$b1hat), cex=3 ,col="Green",pch=19)
+```
+The predicted Y-Value for the X-Value of 15.5 is 98.12864.
+
+##Orange Juice
+
+###OJ Plot with Least Squares Line
+
+```{r}
+oj = read.csv("OJUICE.csv")
+line = mylsq(x = oj$Pectin, y = oj$SweetIndex)
+plot(oj$SweetIndex~oj$Pectin, pch = 16, ylab = "Sweetness Index", xlab = "Pectin", main = "OJ")
+abline(line$b0hat, line$b1hat, lwd = 2, col = "Blue")
+```
+
+###$\hat \beta_0$ and $\hat \beta_1$
+
+```{r}
+line$b0hat
+```
+The predicted value of Pectin as zero of the OJ data is 6.252068 on the Sweetness Index.
+
+```{r}
+line$b1hat
+```
+The predicted slope of Sweetness to Pectin is -0.002310626.
+
+###X as $\hat y_i = 300$
+
+```{r}
+mypred(300, line$b0hat, line$b1hat)
+```
+According to the least squares line, if pectin is 300, then the Sweetness Index of the orange juice is 5.55888.
+
+##Drilling in Rock
+
+###Plot of DrillRock with Least Squares Line
+
+```{r}
+rock = read.csv("DRILLROCK.csv")
+line = mylsq(x = rock$DEPTH, y = rock$TIME)
+plot(rock$TIME~rock$DEPTH, pch = 16, ylab = "Time", xlab = "Depth", main = "Drilling rock")
+abline(line$b0hat, line$b1hat, lwd = 2, col = "Blue")
+```
+
+###$\hat \beta_0$ and $\hat \beta_1$
+
+```{r}
+line$b0hat
+```
+As Depth is zero, the predicted value of time to drill 5 feet is 4.789603.
+
+```{r}
+line$b1hat
+```
+The Time/Depth slope is 0.01438785.
+
+
+#Task4
+
+##Variance Function
+
+```{r}
+mysq=function(x,y){
+  n=length(x)
+  ssxx=sum((x-mean(x))^2 )
+  ssxy=sum((x-mean(x))*(y-mean(y)))
+  b1hat=ssxy/ssxx
+  b0hat=mean(y)-b1hat*mean(x)
+  yhat=b0hat+b1hat*x
+  ssr=sum((y-yhat)^2)
+  sq= ssr/(n-2)
+  return(list(b1hat = b1hat, b0hat = b0hat, ssr=ssr,sq=sq, yhat=yhat))
+}
+x=1:20
+set.seed(29);y=4+6*x + rnorm(20,0,5)
+line = mysq(x=x,y=y)
+line$sq
+```
+
+##How Close?
+
+```{r}
+line$sq - var(slr$residuals)
+```
+The estimated varience of errors is 1.501812.
+
+##Carbon
+
+```{r}
+carb = read.csv("CARBON.csv")
+line = mysq(carb$LabFurnace, carb$PilotPlant)
+plot(carb$PilotPlant~carb$LabFurnace, ylab = "Pilot Test", xlab = "Lab Furnace", main = "CARBON")
+abline(line$b0hat, line$b1hat, lwd = 2, col = "Blue")
+```
+
+###Residual Sum of Squares
+
+```{r}
+line$ssr
+```
+According to the function, the sum of squares is 4.694591.
+
+###Estimated Variance of the Residuals
+
+```{r}
+line$sq
+```
+The Estimated Variance of the Residuals is 0.2041127.
+
+###Estimated Standard Deviation of Residuals
+
+```{r}
+sqrt(line$sq)
+```
+The Estimated Standard Deviation of Residuals is 0.4517883.

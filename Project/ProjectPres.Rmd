@@ -1,0 +1,161 @@
+---
+title: "The Shocking Truth about History"
+author: "Clayton Glenn"
+date: "April 27, 2018"
+output:
+  slidy_presentation: default
+  ioslides_presentation: default
+  beamer_presentation: default
+bibliography: project-bib.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+![Alternative Energy Resources (http://energyfive.net/2018/02/05/what-is-hydroelectric-power-plant/)](Hydro.jpg "My Picture"){ width=80% }
+
+#The Data
+
+ - The data set was collected by the Energy Information Association and the collection began in 2003 to forecast future prices and show the United States' history of Electric Prices Privately and Commercially. The data is yearly and for Simple Linear Regression sake, we will only deal with the total Electric Prices per year in Cents per Kilowatt Hour. For the sake of linear regression, I will change 1960-2011 to 0:51 to correctly show the intercept of the data.
+
+#Plot of Data
+
+```{r}
+ep.df <- read.csv("ep.csv")
+plot(ep.df$TOT~ep.df$YEAR, ylab = "Electric Prices(Cents/Kilowatt Hour)", xlab = "Year", main = "Electric Price~Year", pch = 18, col = "Red")
+```
+
+#The Research Question
+
+Hopefully I will be able to Research the Located Spots that stand as outliers in the Historical Timeline that led to inflation and deflation of prices with the linear model.
+
+#Assumptions
+
+ - The trend is linear.
+
+ - $\epsilon_i\sim N(0,\sigma^2)$
+
+ - Constant Variance
+
+#Linear Trend
+
+```{r}
+x = 0:(length(ep.df$YEAR)-1)
+ep.lm <- lm(TOT ~ x, data = ep.df)
+library(s20x)
+trendscatter(ep.df$TOT~ep.df$YEAR, f = 0.7, ylim = c(0,10), main = "Energy Prices ~ Years", xlab = "Year", ylab = "Energy Prices")
+```
+
+#Independence
+
+ - Tolerance
+
+ - $T=1-R^2$
+
+```{r}
+set.seed(19);sam <- ep.df[sample(1:nrow(ep.df), 31,
+  	replace=FALSE),]
+samx = 1:length(sam$YEAR)
+sam.lm <- lm(TOT ~ samx, data = sam)
+ 1-summary(sam.lm)$r.squared
+```
+
+ Since tolerance is >.1, we cannot reject the assumption that the data is Independent.
+ 
+#$N\sim (0,\sigma^2)$
+
+```{r}
+
+set.seed(19);sam <- ep.df[sample(1:nrow(ep.df), 31,
+  	replace=FALSE),]
+samx = 1:length(sam$YEAR)
+ sam.lm <- lm(TOT ~ samx, data = sam)
+library(s20x)
+normcheck(sam.lm, shapiro.wilk = TRUE)
+```
+
+#Normality
+
+The Shapiro-Wilk Test shows a pretty normal distrubution of a transformed sample of the population of years, and the qqplot shows a p-value of 0.082. This means the null hypothesis of a normal distribution is accepted by pvalue, and the central limit theorem states with a population greater than 30 that we can accept the assumption of normaility.
+
+#Non-Constant variance about the line
+
+```{r}
+plot(sam.lm, which =1, pch = 19)
+```
+
+With the tranformation of y by taking a random sample, we can prove the Assumption of almost Constant Variance 
+
+#Residuals
+
+ -With the regular population, we have to reject the null of the Residuals being distributed normally and constant variance.
+
+ -With the transformation by taking a random sample with a set seed, we can accept the assumption that the residuals are constantly distributed about zero and the residuals are distributed normal about zero.
+
+
+#The linear model
+
+ - Using Simple Linear Regression, we can explain the data using the formula $y_i = \beta_0+\beta_1x_i+\epsilon_i$
+
+ - Our estimation of this formula is linear and a predictor as a formula $\hat y_i = \hat \beta_0+ \hat \beta_1x_i+r_i$
+
+ - The coefficients can be predicted by taking sum of squares of xy and xx.
+
+ $\hat \beta_1 = \frac{SS_{xy}}{SS_{xx}}$
+
+ $\hat \beta_0 = \bar y - \hat \beta_1\bar x$
+
+#How good is the model?
+
+```{r}
+summary(ep.lm)$r.squared
+```
+
+ - With Multiple R Squared as 92%, we can safely say the linear model is a good predictor of the corresponding Electric Prices.
+
+#Coefficients and their meaning
+
+```{r}
+summary(ep.lm)$coefficients
+```
+
+ - Using the data above, we can predict the coefficients
+
+ $$\hat \beta_0 = 0.9124$$
+
+ $$\hat \beta_1 = 0.1716$$
+ 
+
+#Least squares regression line
+
+```{r}
+b0 = 0.9124-.1716*1960
+plot(ep.df$TOT~ep.df$YEAR, ylab = "Electric Prices", xlab = "Year", main = "Least Squares Regression Line", pch = 19, col= ifelse(ep.lm$residuals >= sd(ep.lm$residuals), "Yellow", ifelse(ep.lm$residuals <= -sd(ep.lm$residuals), "Yellow", "Black")))
+abline(b0, 0.1716)
+abline(b0-sd(ep.lm$residuals), 0.1716, col = "Red")
+abline(b0+sd(ep.lm$residuals), 0.1716, col = "Red")
+```
+
+#Interpretation of Least Squares Plot
+
+ - The plot shown in the previous slide shows the linear model fitted to the actual data and the data points highlighted in yellow are more than 1 standard deviation in error from the linear model. These years will be used to conclude which events happened in history to cause the major inflation and deflation.
+
+#Conclusions
+
+ - 1970's
+
+ -- "The Oil Crisis (October 1973 - March 1974) caused by oil embargo of Organization of Arab Petroleum Countries has significant impact on oil consumption and efficiency of the electric plants. The crisis showed great dependence of Unites States and other western countries on oil price and led to greater interest interest in renewable energy and induced research in solar and wind power. Petroleum consumption for electricity at 1970 was roughly 15%." [3] The Oil Crisis alone created a spike in Electricity Prices, and companies were pushed toward renewable electricity. 
+
+ - 1980's
+
+ -- The United States however adopted the Fuel Use Act in 1980 that prohibited new electric generators from using petroleum because it is a nonrenewable resource. This led to cleaner and more efficient means of generating electricity and prices stabilized for a decade. 
+
+#Conclusions(cont.)
+
+ - 2000's
+
+ -- In the new millenium, the Clean Air Act of 1992 took affect and the sight of new improvements to electrity production was in full swing. Electricity Prices rose to back the corperations that generate power to fund these innovative plans. After a decade, the Electricity economy finally stabilized and prices stayed constant.
+
+ - Result
+
+ -- In Conclusion, the major influxes of Electricity Prices can be explained. After visualization of the influxes, recently, it seems that prices inflate as new acts are imposed on electric companies and their attempts to work with these acts. However, the influxes from earlier in the 1900's was due to scarcity of coal resources. Any deflations in price is usually shown by electric companies finally catching the trend and stabilizing the electric sector of the economy.

@@ -1,0 +1,484 @@
+---
+title: "ASS1"
+author: "Clayton Glenn"
+date: "February 8, 2018"
+output:
+  pdf_document: default
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 5
+    number_sections: yes
+    toc: yes
+  word_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Working Directory
+```{r}
+getwd()
+```
+
+
+
+# Question 1
+There are 4 assignments that equal 15% of my grade and all work must be shown to receive full credit. There are 16 Labs in the class that equal 10% of my grade. I cannot deposit my lab into the drop box after time is up. The 1 project I have is 10% of my total grade. The project is over Simple Linear Regression and needs to be submitted in the outlined format provided on canvas. Clickers are done in class and worth 10% of my total grade. Missing a couple class will most likely not change my grade. Chapter quizzes are online and equal 5% of my total grade. They are usually 10 questions and are graded automatically. I have 2 midterm exams worth a total of 20% of my grade. The midterms should not overlap in content, but the final exam will. My final in this class is worth 30% of my grade and is cumulative. The breakup of the final exam will be about 1/3 Exams 1 and 2, and 2/3 from chapters 8 and 10. The grading scale in this class is as follows: A(90-100), B(80-89), C(60-79), D(50-59), F(0-49) without the possibility of a curve of the total grade, so what you earn is what you get.
+
+
+
+# Question 2
+## Data Read
+```{r}
+ddt = read.csv("DDT.csv")
+```
+
+## Part A
+```{r}
+m=with(ddt, as.numeric(levels(factor(MILE)))) # A
+colm=c()
+for(i in 1:length(ddt$MILE)){
+colm[i]=which(ddt$MILE[i]==m) #B
+}
+coplot(LENGTH ~ WEIGHT | RIVER*SPECIES, ddt, col = colm, pch = colm)
+```
+
+## Part B
+This coplot shows the broken-up data of each river and species. The lower far left plot shows the number and size of catfish in the FCM River. The Lower Left Mid plot shows the number and size of catfish in the LCM River, and the Lower Third from the Left plot shows the number and size of catfish that are in the SCM River.
+
+## Part C
+```{r}
+with(ddt, as.numeric(levels(factor(MILE))))
+```
+Line A shows the Each independent mile number in an array of numbers.
+
+## Part D
+```{r}
+which(ddt$MILE[i]==m)
+```
+Line B shows the Length of the array of independent mile numbers.
+
+## Part E
+The top six plots are empty due to the fact that FCM, LCM, and SCM Rivers do not contain SMBUFFALO or LMBASS, so no data is shown for the coplots.
+
+## Part F
+\[Mean=\frac{\sum_{i=1}^nX_{i}}{N}\]
+```{r}
+with(ddt[ddt$RIVER=="FCM" & ddt$SPECIES=="CCATFISH",],{
+  mean(DDT)
+})
+```
+The mean value of DDT in CCATFISH Caught in the FCM river is 45.
+
+
+
+# Question 3
+
+## Part A
+Length of Maximum Span(Feet) = Quantitative
+
+## Part B
+Number of Vehicle Lanes = Quantitative
+
+## Part C
+Toll Bridge = Qualitative
+
+## Part D
+Average Daily Traffic = Quantitative
+
+## Part E
+Condition of Deck(good, fair, or poor) = Qualitative
+
+## Part F
+Bypass or Detour Length(Miles) = Quantitative
+
+## Part G
+Route Type(interstate, U.S., state country, or city) = Qualitative
+
+
+
+# Question 4
+
+## Simple Random Sampling(Simple)
+Randomly chose units out of a population.
+
+## Stratified Random Sampling(Complex)
+Sampling used when units can be separated into strata or groups by characteristics.
+
+## Cluster Sampling(Complex)
+Sampling used to break down large samples into clusters and then compare them.
+
+## Systematic Sampling(Complex)
+Sampling used by selecting every Kth element in a population for a random sample.
+
+
+
+# Question 5
+
+## Data Read
+```{r}
+mtbe = read.csv("MTBE.csv")
+mtbeo=na.omit(mtbe)
+```
+
+## Part A
+```{r}
+i=sample(1:223,5,replace=FALSE)
+mtbe[i,]
+```
+
+## Part B
+### Standard Deviation of depth of Bedrock wells
+\[Standard Deviation=\frac{\sum_{i=1}^n(X_{i}-\bar{X})^2}{N-1}\]
+```{r}
+sd(mtbeo[mtbeo$Aquifier=="Bedrock",]$Depth)
+```
+
+
+
+# Question 6
+
+## Data Read
+```{r}
+eq = read.csv("EARTHQUAKE.csv")
+```
+
+## Random Sample
+```{r}
+eqsam=sample(1:2929,30,replace=FALSE)
+eq[eqsam,]
+```
+
+## Part A
+### Section i
+```{r}
+plot(ts(eq$MAG))
+```
+
+### Section ii
+\[Median=X_{N/2}\]
+```{r}
+median(eq$MAGNITUDE)
+```
+The median of the whole Earthquake data file based on magnitude is 2
+
+
+
+#Question 7
+
+## Part A
+The scientists used a stratified sample.
+
+## Part B
+The Population was all fish in the Tennessee River and its tributaries.
+
+## Part C
+The qualitative variables in DDT file is River and Species.
+
+
+
+#Question 8
+
+## Part A
+A bar graph describes the data.
+
+## Part B
+Number of Robots
+
+## Part C	
+According to the graph, the most used robot design is Legs Only.
+
+## Part D
+\[Relative Frequency=\frac{Class}{N}\]
+```{r}
+15/106
+8/106
+63/106
+20/106
+```
+
+## Part E - Wrong
+```{r}
+freq=c(15,8,63,20)
+RL=c("None","Both","LegsO","WheelsO")
+x=rep(RL,freq)
+```
+
+
+
+
+# Question 9
+
+## Part A
+```{r}
+mpfreq=c(32,6,12)
+mpt=c("Windows","Explorer","Office")
+pie(mpfreq, mpt)
+```
+Based on the pie chart, Explorer has the lowest proportion of security issues.
+
+## Part B - Wrong
+```{r}
+pareto<-function(mpfreq,mn="Microsoft Security",...){
+  mpfreq.tab<-table(mpfreq)
+  xx.tab<-sort(mpfreq.tab, decreasing=TRUE,index.return=FALSE)
+  cs<-cumsum(as.vector(xx.tab))
+  lenx<-length(mpfreq.tab)
+  bp<-barplot(xx.tab,ylim=c(0,max(cs)),las=2)
+  lb<-seq(0,cs[lenx],l=11)
+  axis(side=4,at=lb,labels=paste(seq(0,100,length=11),"%",
+  sep =""),las=1,line=-1,col="Blue",col.axis="Red")
+  for(i in 1:(lenx-1)){
+    segments(bp[i],cs[i],bp[i+1],cs[i+1],col=i,lwd=2)
+  }
+  title(main=mn,...)
+}
+#plot(pareto)
+```
+Based on the pareto graph, Windows should be the most focused on by Microsoft.
+
+
+
+# Question 10
+```{r}
+swd=read.csv("SWDEFECTS.csv", header=TRUE)
+#head(swd)
+library(plotrix)
+tab=table(swd$defect)
+rtab=tab/sum(tab)
+round(rtab,2)
+pie3D(rtab,labels=list("OK","Defective"),main="SWD")
+
+```
+The likelihood of software code being defective is 10%. The probability of OK software is 10:1.
+
+
+
+# Question 11
+
+## Data Read
+```{r}
+voltage.df<-read.csv("VOLTAGE.csv", header=TRUE)
+old<-subset(voltage.df,subset=LOCATION=="OLD")
+new<-subset(voltage.df,subset=LOCATION=="NEW")
+```
+
+## Part A
+```{r}
+old$VOLTAGE->vtn
+lept<-min(vtn)-0.05
+rept<-max(vtn)+0.05
+rnge<-rept-lept
+inc<-rnge/9
+seq(lept, rept,by=inc)->cl
+cvtn<-cut(vtn,breaks=cl)
+new.tab=table(cvtn)
+barplot(new.tab,space=0,main="Frequency Histogram(OLD)",las=2)
+```
+
+## Part B
+```{r}
+stem(vtn)
+```
+
+## Part C
+```{r}
+new$VOLTAGE->vtn
+lept<-min(vtn)-0.05
+rept<-max(vtn)+0.05
+rnge<-rept-lept
+inc<-rnge/9
+seq(lept, rept,by=inc)->cl
+cvtn<-cut(vtn,breaks=cl)
+new.tab=table(cvtn)
+barplot(new.tab,space=0,main="Frequency Histogram(NEW)",las=2)
+```
+
+## Part D
+The New Process is better than the Old process due to less outliers of voltage.
+
+## Part E
+\[Mean=\frac{\sum_{i=1}^nX_{i}}{N}\]
+\[Median=X_{N/2}\]
+\[Mode=Class Most Often\]
+```{r}
+mean(old$VOLTAGE)
+median(old$VOLTAGE)
+which.max(old$VOLTAGE)
+```
+
+```{r}
+mean(new$VOLTAGE)
+median(new$VOLTAGE)
+which.max(new$VOLTAGE)
+```
+We can use the median for the central tendency because the median is close enough to mean and is a better looking number.
+
+## Part F
+\[\mathcal{Z}Score=\dfrac{10.5-\bar{X}_{i}}S\]
+```{r}
+(10.5-mean(old$VOLTAGE))/sd(old$VOLTAGE)
+```
+
+## Part G
+```{r}
+(10.5-mean(new$VOLTAGE))/sd(new$VOLTAGE)
+```
+
+## Part H
+Based on parts F and G, 10.5 Voltage will more likely occur at the old process. This is due to 10.5 being closer to mean+sd
+
+## Part I
+```{r}
+with(old,boxplot(VOLTAGE,ylab="Old Process",col="Blue",notch=TRUE))
+```
+There are 4 outliers in the old process data.
+
+## Part J
+```{r}
+old[  (old$VOLTAGE-mean(old$VOLTAGE))/sd(old$VOLTAGE) <= -2 |
+      (old$VOLTAGE-mean(old$VOLTAGE))/sd(old$VOLTAGE) >= 2,]
+```
+
+## Part K
+```{r}
+with(new,boxplot(VOLTAGE,ylab="New Process",col="Red",notch=TRUE))
+```
+
+## Part L
+```{r}
+new[  (new$VOLTAGE-mean(new$VOLTAGE))/sd(new$VOLTAGE) <= -2 |
+      (new$VOLTAGE-mean(new$VOLTAGE))/sd(new$VOLTAGE) >= 2,]
+```
+
+## Part M
+```{r}
+layout(matrix(c(1,2),nr=1,nc=2))
+with(old,boxplot(VOLTAGE,ylab="Old Process",col="Blue",notch=TRUE))
+with(new,boxplot(VOLTAGE,ylab="New Process",col="Red",notch=TRUE))
+```
+
+# Question 12
+\[\frac{\sum_{i=1}^nX_{i}}{N}-\frac{\sum_{i=1}^n(X_{i}-\bar{X})^2}{N-1}\]
+```{r}
+RP <- c(1.72,2.5,2.16,2.13,1.06,2.24,2.31,2.03,1.09,1.4,2.57,2.64,1.26,2.05,1.19,2.13,1.27,1.51,2.41,1.95)
+mean(RP) - sd(RP)*2
+mean(RP) + sd(RP)*2
+```
+
+
+
+# Question 13
+
+## Data Read
+```{r}
+gobi.df<-read.csv("GOBIANTS.CSV", header=TRUE)
+dry.df = within(gobi.df, {
+  reg <- ifelse(Region == "Gobi Desert", "GS","DS")
+  reg<-factor(reg)
+})
+des.df = subset(gobi.df,subset=Region=="Gobi Desert")
+```
+
+## Part A
+\[Mean=\frac{\sum_{i=1}^nX_{i}}{N}\]
+\[Median=X_{N/2}\]
+\[Mode=Class Most Often\]
+```{r}
+mean(gobi.df$AntSpecies)
+```
+The Average Ant Species in all 11 sites.
+
+```{r}
+median(gobi.df$AntSpecies)
+```
+The Amount of Ant Species at the Site that has the exact middle amount of Ant Species.
+
+```{r}
+which.max(gobi.df$AntSpecies)
+```
+The Most common number of Species at the sites.
+
+## Part B
+The mean value best suits the data, due to the high volume of species at few sites.
+
+## Part C
+\[Mean=\frac{\sum_{i=1}^nX_{i}}{N}\]
+\[Median=X_{N/2}\]
+\[Mode=Class Most Often\]
+```{r}
+mean(dry.df[dry.df$reg == "DS",]$PlantCov)
+```
+
+```{r}
+median(dry.df[dry.df$reg == "DS",]$PlantCov)
+```
+
+```{r}
+which.max(dry.df[dry.df$reg == "DS",]$PlantCov)
+```
+
+## Part D
+\[Mean=\frac{\sum_{i=1}^nX_{i}}{N}\]
+\[Median=X_{N/2}\]
+\[Mode=Class Most Often\]
+```{r}
+mean(des.df$PlantCov)
+```
+
+```{r}
+median(des.df$PlantCov)
+```
+
+```{r}
+which.max(des.df$PlantCov)
+```
+
+## Part E
+The ant species seems more abundant with less plant cover, so the Dry Steppe is more bountiful for Ants.
+
+
+
+# Question 14
+
+##Part A
+```{r}
+gal.df<-read.csv("GALAXY2.CSV", header=TRUE)
+low.df = gal.df[gal.df$VELOCITY < 21000,]
+high.df = gal.df[gal.df$VELOCITY > 21000,]
+```
+
+```{r}
+plot(gal.df)
+```
+
+##Part B
+Yes, there are two clusters. One cluster is between 19000 and 20000, and the other cluster is between 22000 and 23000.
+
+## Part C
+\[Mean=\frac{\sum_{i=1}^nX_{i}}{N}\]
+\[Standard Deviation=\frac{\sum_{i=1}^n(X_{i}-\bar{X})^2}{N-1}\]
+```{r}
+mean(low.df)
+sd(low.df)
+mean(high.df)
+sd(high.df)
+```
+
+##Part D
+The galaxy Velocity of 20000 would fit within A1775A because the velocity is much closer to A1775A's Mean + SD than A1775B's Mean - SD.
+
+
+
+# Question 15
+
+```{r}
+library(ggplot2)
+gg <- ggplot(ddt, aes(x=RIVER, y=LENGTH, color=SPECIES, fill = SPECIES))
+gg <- gg + geom_boxplot(colour = "#1F3552")
+gg <- gg + ggtitle("Clayton Glenn")
+show(gg)
+```

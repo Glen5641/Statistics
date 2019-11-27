@@ -1,0 +1,481 @@
+---
+title: "The Shocking Truth about History"
+author: "Clayton Glenn"
+date:  "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  word_document:
+    toc: yes
+    toc_depth: '4'
+  html_document:
+    code_folding: show
+    csl: biomed-central.csl
+    df_print: paged
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    number_sections: yes
+    theme: journal
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    df_print: kable
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    highlight: tango
+    toc: yes
+    toc_depth: 4
+bibliography: project-bibtex.bib
+abstract: This project uses pplications of SLR to Electric Prices using R, RMD, Word, Beamer, PDF, and HTML. The project clearly defines SLR in terms of theory, words, and graphics. Upon analysis of the Electric Prices throughout 1960-2011, the data tells a story of history of policies changing hands and being redistributed. Various graphs show the bulk of the project highlighted with text to clarify any uninvolved areas.
+---
+
+![Clayton Glenn](me.jpg "My Picture"){ width=30% }
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+Throughout history, Energy Costs have been have been steadily increasing due to Inflation of Currency, Scarcity of Resources, and Green Laws Barring Steady Production. With the Supplimentation of Energy into our Everyday living Trending Further toward Green and Efficient Methods, we have seen Influxes of Costs when New Alternatives are Introduced.
+
+![Alternative Energy Resources (http://energyfive.net/2018/02/05/what-is-hydroelectric-power-plant/)](Hydro.jpg "My Picture"){ width=80% }
+
+This Project will Breakdown the Average Retail Prices of Electricity from 1960-2011 (Cents per Kilowatthour, Including Taxes) to Attempt to Find the Years that New and Improved Ways have been Implemented to Produce Energy. 
+
+Data has been Collected by the US Energy Information Association. [see @EIA]
+
+
+
+## Data of Electric Prices from 1960 - 2011
+
+```{r}
+ep.df <- read.csv("ep.csv")
+head(ep.df)
+```
+[1]
+
+### Variables of the data file
+
+```{r}
+names(ep.df)
+```
+
+For the sake of linear regression, we will only focus on The 2 Categorical variables Total Electric Prices (Discrete) corresponding to each Year (Continuous), and throughout the theory, the year will be a range of 0:51 to find accurate coefficients.[1]
+
+### Plot of Electric Prices from 1960 - 2011
+
+```{r, fig.height = 5, fig.cap = "Electricity Prices"}
+library(ggplot2)
+x = 0:(length(ep.df$YEAR)-1)
+ep.lm <- lm(TOT ~ x, data = ep.df)
+g = ggplot(ep.lm, aes(x = x, y = TOT, color = x)) + geom_point()
+g = g + ylab("Electric Prices (Cents per Kilowatthour)") + xlab("Year") + ggtitle("Electric Price ~ Year", subtitle = NULL)
+g = g + geom_smooth(method = "loess")
+g
+```
+
+### Data Collection and Why Data was Collected
+
+"According to EIA, the Data Collection Began in 2003. The Category "Other" has been Replaced by "Transportation," and the Categories "Commercial" and "Industrial" have been Redefined. The Data Represents Revenue from Electricity Retail Sales Divided by Electricity Retail Sales. Prices include State and Local Taxes, Energy or Demand Charges, Customer service charges, Environmental Surcharges, Franchise Fees, Fuel Adjustments, and Other Miscellaneous Charges Applied to End-Use Customers during Normal Billing Operations. Prices do not Include Deferred charges, Credits, or other Adjustments, such as Fuel or Revenue from Purchased Power, from previous Reporting Periods.
+Through 1979, The Data is for Classes A and B Privately Owned Electric Utilities only. (Class A  Utilities are Those with Operating Revenues of 2.5 Million Dollars or More; Class B Utilities are Those with between 1 Million Dollars and 2.5 Million Dollars.)
+For 1980 - 1982, the Data is for Selected Class A Utilities Whose Electric Operating Revenues were 100 Million Dollars or More during the Previous Year.
+For 1983, the Data is for a Selected Sample of Electric Utilities. 
+Beginning in 1984, the Data is for a Census of Electric Utilities.
+Beginning in 1996, the Data also Includes Energy Service Providers Selling to Retail Customers."
+-Per EIA [1]
+![Energy Information Association](eia.jpg "Energy"){ width=95% }
+
+The Data was Initially Collected to Analyze Energy Prices. In Hindsight, the Data has been used to Generate Forecasts and Projections for Energy Prices in the Future.
+
+### Why so Interesting
+
+I have a Monumental Interest with the Data mostly due to our Carbon Footprint. Hopefully I will be able to Research the Located Spots in the Historical Timeline that led to better Efficiency of Energy Production and Consumption.
+
+# SLR Theory
+
+Simple Linear Regression can be used to create a formula to predict points of interest, find outliers, and show variation of the points about the mean and the regressive line itself. The formula I produced outputs a list of useful equations that output my form of SLR gold as you could call it. Each formula will be broken down to show its very meaning behind the data. 
+
+```{r}
+mysummary = function(x=x,y=y){
+  ssxx  = sum((x - mean(x)) ^ 2)
+  ssxy  = sum((x - mean(x)) * (y - mean(y)))
+  ssyy  = sum((y - mean(y)) ^ 2)
+  b1hat = ssxy / ssxx
+  b0hat = mean(y) - b1hat * mean(x)
+  yhat  = b0hat + b1hat * x
+  rss   = sum((y - yhat) ^ 2)
+  mss   = sum((yhat - mean(y)) ^ 2)
+  tss   = sum((y - mean(y)) ^ 2)
+  yerr  = y - yhat
+  rerr  = y - b0hat - b1hat*x
+  sdhat = sd(y) / ssxx
+  r     = ssxy / sqrt(ssxx*ssyy)
+  
+  return(list(ssxx = ssxx, ssxy = ssxy, ssyy = ssyy, b1hat = b1hat, b0hat = b0hat, yhat = yhat, rss = rss, mss = mss, tss = tss, yerr = yerr, rerr = rerr, sdhat = sdhat, r = r))
+}
+ep.summary = mysummary(x, ep.df$TOT)
+```
+[see @Stats]
+## Sum of Squares of X
+
+$$SS_{xx}=\sum^n_{i=1}(x-\bar x)^2=S^2_x(n-1)$$
+Sum of Squares of X shows the variability of the Independent Variables or the Covariance of x.
+```{r}
+ep.summary$ssxx
+```
+
+We can check SSxx by taking the variance of the TOTAL electric prices across the US and multiplying by the array of years minus 1.
+
+```{r}
+var(x) * (length(x) - 1)
+```
+
+## Sum of Squares of XY
+
+$$SS_{xy}=\sum^n_{i=1}(x_i-\bar x)(y_i-\bar y) = S^2_{xy}(n-1)$$
+Sum of Squares of X and Y measures how X and Y varies together or the Covariance of x,y.
+
+```{r}
+ep.summary$ssxy
+```
+
+SSxy can be checked by taking the covariance of x and y and multiplying it by the number of years data was taken minus 1.
+
+```{r}
+cov(x,ep.df$TOT) * (length(x) - 1)
+```
+
+## Slope of Linear Model
+$$\hat \beta_1=\frac{SS_{xy}}{SS_{xx}}$$
+By taking the sum of squares of xy and dividing by sum of squares of x, we obtain Beta1hat. The predicted value of Beta 1 shows the slope of our linear model we are going to apply to the data.
+
+```{r}
+ep.summary$b1hat
+```
+
+
+## Intercept of Linear Model
+$$\hat \beta_0=\bar y-\hat \beta_1\bar x$$
+After finding the predicted value of Beta1, we can now find the predicted value for Beta-not. Beta-not is the y-intercept in our linear model formula and can be found by taking difference of the mean of y and the predicted value of Beta1 times the mean of x.
+
+```{r}
+ep.summary$b0hat
+```
+
+## Residual of Xi, Error
+$$Residual_i=\hat \epsilon_i=Y_i-\hat Y_i$$
+The residual can also be denoted as the prediction of the error difference between the actual y value and its prediction corresponding the the x value. Each y value has an error to the linear model.
+
+```{r}
+ep.summary$yerr
+```
+
+## Residual Sum of Squares or Error Sum of Squares
+$$RSS=\sum^n_{i=1}(y_i-\hat y)^2 = \sum^n_{i=1}(\epsilon_i)^2=s^2_r(n-2)$$
+
+The residual sum of squares measures the difference of the linear model as opposed to the real data. As the Residual sum of squares tends smaller, the linear model better fits the data.
+
+```{r}
+ep.summary$rss
+```
+
+To check the Residual sum of squares, we can take the sum of the errors of each x value squared.
+
+```{r}
+sum(ep.summary$yerr^2)
+```
+
+## Model Sum of Squares
+$$MSS=\sum^n_{i=1}(\hat y-\bar y)^2$$
+The model sum of squares is the variation of the predicted value of y to the mean of y.
+
+
+```{r}
+ep.summary$mss
+```
+
+## Total Sum of Squares or Sum of Squares of Y
+$$TSS=SS_{yy}=\sum^n_{i=1}(y_i-\bar y)^2=S^2_y(n-1) = RSS+MSS$$
+The total sum of squares is the squared difference of the actual y value as opposed to the mean of y. A steeper linear model shows a higher total sum of squares and vice versa.
+
+```{r}
+ep.summary$tss
+```
+
+We can check the validity of the total sum of squares multiplying the variance of y by total years minus 1
+
+```{r}
+var(ep.df$TOT) * (length(ep.df$TOT) - 1)
+```
+
+Another way to check the validity of the Total sum of squares is by pathagorean theorem. A^2+B^2=C^2 where c^2 is the TSS, b^2 is RSS, and a^2 is MSS.
+
+```{r}
+ep.summary$mss + ep.summary$rss
+```
+
+## Linear Model vs Actual Data
+
+### Equation of Linear Model
+$$\hat y =\hat \beta_0+\hat \beta_1 x_i$$
+After finding the bulk of our equation, we can now find yhat. Each x value has its own unique predicted value in the model and can be found by the equation above. Yhat can be used to find the Residual and Model sum of squares and the error for each x value to the linear model.
+
+```{r}
+ep.summary$yhat
+```
+
+### Equation of Data
+$$Y_i=\hat \beta_0+\hat \beta_1x+ \epsilon_i$$
+Now that we have found the predicted values of beta1 and beta2, we can find the actual position of each data point from the linear model regarding to the data file of Total Electric Prices.
+
+```{r}
+ep.summary$b0hat+ep.summary$b1hat*x+ep.summary$rerr
+```
+
+We can check the validity of our theoretical model of the actual data by just comparing the formula to the actual data itself
+```{r}
+ep.df$TOT
+```
+
+### Electric Price Linear Model
+
+We can now use $$\hat Y = \hat \beta_0 + \hat \beta_1X$$ as a predictor of each datum according to each independant variable. The line can be applied to the actual data to show the linear model.
+```{r}
+plot(ep.df$TOT~x, ylim = c(0, max(ep.df$TOT) + 1), xlim = c(0, max(x)), ylab = "Electric Prices (Cents per Kilowatthour)", xlab = "Year", main = "Plot of Theoretical Model with Data")
+abline(ep.summary$b0hat, ep.summary$b1hat, lwd = 2, col = "Blue")
+```
+
+Using the linear model we produced with code, we can check the validity of our theoretical linear model.
+
+```{r}
+with(ep.df, {
+  plot(TOT~x,bg="Blue",pch=21,ylim=c(0,1.1*max(TOT)),xlim=c(min(x)-1,max(x)+1), ylab = "Electric Prices (Cents per Kilowatthour)", xlab = "Year", main = "Plot of Theoretical Model with Data")
+  abline(ep.lm)
+})
+```
+
+According to the linear models, we have a perfect match, so our theory is valid.
+
+### Error Plot from Linear Model
+
+With the data and the linear model, we can show how much each datum varies from the theoretical linear model we have produced.
+```{r}
+with(ep.df, {
+  plot(TOT~x,bg="Blue",pch=21,ylim=c(0,1.1*max(TOT)),xlim=c(min(x),max(x)), ylab = "Electric Prices (Cents per Kilowatthour)", xlab = "Year")
+  segments(x,TOT,x,ep.summary$yhat)
+  abline(ep.lm)
+  mtext("Diff between Point and Expected Point")
+})
+```
+  
+### Plot of the Difference between our Theoretical Model and the Mean of the Electric Prices
+
+We can also show the difference between the mean and the theoretical linear model.
+```{r}
+with(ep.df, {
+  plot(TOT~x,bg="Blue",pch=21,ylim=c(0,1.1*max(TOT)),xlim=c(min(x),max(x)), ylab = "Electric Prices (Cents per Kilowatthour)", xlab = "Year")
+  abline(ep.lm)
+  abline(h=mean(TOT))
+  segments(x,mean(TOT),x,ep.summary$yhat,col="Red")
+  mtext("Diff between Linear Model and Mean")
+})
+```
+
+### Plot of the Difference between each Datum and the Mean of Electric Prices
+
+With the mean, we can show the difference between each datum and the mean about the electric prices.
+```{r}  
+with(ep.df, {
+  plot(TOT~x,bg="Blue",pch=21,ylim=c(0,1.1*max(TOT)),xlim=c(min(x),max(x)), ylab = "Electric Prices (Cents per Kilowatthour)", xlab = "Year")
+  abline(h=mean(TOT))
+  segments(x,TOT,x,mean(TOT),col="Green")
+  mtext("Diff between Point and Mean")
+})
+```
+
+### Trendscatter of Electric Prices
+
+```{r}
+library(s20x)
+trendscatter(ep.df$TOT~ep.df$YEAR, f = 1, ylim = c(0,11), main = "Energy Prices ~ Years", xlab = "Year", ylab = "Energy Prices")
+```
+
+Using a trend scatter plot, we can show the standard deviation of error on each side of the linear model with shows the most outlying points of time when electric prices increased or decreased dramatically. This gains momentum to our best guesses on which are the best times to look into history.
+
+#Assumption Check of SLR
+
+##Linearity of Data
+
+### Plotted Data with Linear Model
+```{r}
+plot(ep.df$TOT~x, ylim = c(0, max(ep.df$TOT) + 1), xlim = c(0, max(x)), ylab = "Electric Prices (Cents per Kilowatthour)", xlab = "Year")
+abline(ep.summary$b0hat, ep.summary$b1hat, lwd = 2, col = "Blue")
+```
+
+### Residual vs Fitted Values
+```{r}
+plot(ep.lm, which =1, pch = 19)
+abline(mean(ep.lm$residuals)+1.5*sd(ep.lm$residuals),0)
+abline(mean(ep.lm$residuals)-1.5*sd(ep.lm$residuals),0)
+```
+From the two graphs above, the plotted data and the plotted residuals~fittedvalues, we can see linearity in the data.
+
+## Data is Multivariate Normal
+
+For a linear model to be a linear regression, we must have a normal distribution with the residuals.
+$$\epsilon_i \sim N(0,\sigma^2)$$
+
+### Shapiro-wilk
+We can check normality of the residuals by using a Shapiro Wilk graph of the linear model.
+```{r}
+library(s20x)
+normcheck(ep.lm, shapiro.wilk = TRUE)
+```
+As you can see, the residuals are distributed somewhat normally throughout the past electric prices, but we do not have sufficient evidence to reject the evidence since the data is larger than >30
+
+
+#### trendscatter on Residual Vs Fitted
+
+```{r}
+trendscatter(ep.lm$residuals~ep.lm$fitted.values, f = 0.5, main = "Residuals ~ Fitted Values", ylab = "Residuals", xlab = "Fitted Values")
+```
+The data's residuals correspond with the fitted values and follow a general pattern, so constant variance cannot be claimed with the model.
+
+### Zero mean value of $\epsilon$
+```{r}
+mean(ep.summary$yerr)
+```
+This shows the mean of the residuals are approximately zero i.e. $\bar \epsilon \approx 0$.
+Since $\bar \epsilon$ is approximately zero, we do not have evidence to reject the mean of error being zero.
+
+```{r}
+t.test(ep.summary$yerr, mu=0, conf.level = 0.95)
+```
+
+This can also be shown by the pvalue of $\epsilon_i > 0.05$.
+
+## Independence of data
+We can check independence of data through Tolerance or $T=1-R^2$
+```{r}
+1-.9272^2
+```
+Since tolerance is >.1, we cannot reject that the data is Independent.
+
+## Homoscedasticity
+We can check if the data is identically distributed through the plotting of the data with lines of same slope showing variation
+```{r}
+plot(ep.df$TOT~x, pch = 17, col = "Purple", ylab = "Electric Prices (Cents per Kilowatthour)", xlab = "Year")
+abline(ep.summary$b0hat, ep.summary$b1hat)
+abline(ep.summary$b0hat+2*sd(ep.lm$residuals), ep.summary$b1hat, h = 0, lty = 2, col = "Red")
+abline(ep.summary$b0hat-2*sd(ep.lm$residuals), ep.summary$b1hat, h = 0, lty = 2, col = "Red")
+```
+As we can see, the residuals of the Electric Prices lie within 2 standard deviations from the linear model which now, we can accept that the data is identically distributed.
+
+# Analysis Summary
+
+## Summary lm object
+```{r}
+summary(ep.lm)
+```
+
+With the summary of the linear model placed on Electric Prices, we can state that the linear model follows $y_i=0.9124 + 0.1716x_i$ for prediction of any Electric Price given a year. Also, we can see that the residual standard error is 0.736, which shows the data fits the line rather well, but is not perfect. Multiple R Squared also shows a good data fit to the linear model. As multiple R squared tends to 100%, the data is near perfect. With Adjusted R Squared, we can see R squared adjusted to better fit the ammount of predictors we have in the linear model, but Adjusted R Squared is still higher than 90%, which shows the model fits the data very well.
+
+## Calculate cis for $\beta$ parameter estimates
+
+With analysis of the linear model summary, we can find the standard error of beta1 and beta2. With this we can find 95% confidence intervals of both betas.
+```{r}
+ci=c()
+t=abs(qt(0.05/2,length(x)-1))
+ci[1]=ep.summary$b1hat-t*(0.006801)
+ci[2]=ep.summary$b1hat+t*(0.006801)
+ci
+
+```
+
+```{r}
+t=abs(qt(0.05/2,length(x)-1))
+ci[1]=ep.summary$b0hat-t*(0.201234)
+ci[2]=ep.summary$b0hat+t*(0.201234)
+ci
+```
+
+### ci's for Beta1 and Beta0
+
+```{r}
+library(s20x)
+ciReg(ep.lm)
+```
+
+As you can see, we can generate the 95% confidence intervals for $\beta_1$ and $\beta_0$ theorically and computer generated, and they are very close, if not spot on.
+
+## Predictions
+We can now, with the linear model gain access to predictions and with this function, we can produce any approximate prediction between 1960-2011.
+```{r}
+mypred = function(y, ep.lm){
+  predict(ep.lm)[y - 1960]
+}
+mypred(1961, ep.lm)
+mypred(1991, ep.lm)
+mypred(2011, ep.lm)
+```
+
+
+### Outliers using cooks plots
+```{r}
+cooks20x(ep.lm)
+```
+This cooks distance plot, shows each observation and the residual corresponding with the observation. The Higher the line, the more of an error we acheive. In the Electric Prices, we can see that the cooks plot cooked up 3 outliers, and if we add 1960 to each of these outliers, we have 1961, 1973, and 1974. These will be some places we will look for events that have dramatically changed electric prices in the past.
+
+### Plot of residuals
+Before we come to our conclusion and the time points we want to investigate, lets tighten the trend that was loosely placed on the cooks plot. We can do this using a plot of the $Y_{error}$ vs. Year.
+
+```{r}
+plot(y=ep.lm$residuals,x=ep.df$YEAR, col= ifelse(ep.lm$residuals >= 0.9, "Red", ifelse(ep.lm$residuals <= -0.9, "red", "Black")), pch = 10)
+abline(0.9,0)
+abline(-0.9,0)
+```
+
+Looking at the graph, we can definitely see 3 data groups of outliers that we can use as a timeline for history. Lets gather these data.
+
+```{r}
+outliers = c()
+ctr = 1
+for(i in 1:length(ep.lm$residuals)){
+  if(ep.lm$residuals[i] >= 0.9){
+    outliers[ctr] = ep.df$YEAR[i]
+    ctr = ctr + 1
+  }
+  if(ep.lm$residuals[i] <= -0.9){
+    outliers[ctr] = ep.df$YEAR[i]
+    ctr = ctr + 1
+  }
+}
+outliers
+```
+
+Now we absolutely have the years for suspicion.
+
+# Conclusion
+
+Looking at the data group we found above, we have found historical events that correspond with influx of Electricity Prices barring inflation. 
+
+## 1970's
+"The Oil Crisis (October 1973 - March 1974) caused by oil embargo of Organization of Arab Petroleum Countries has significant impact on oil consumption and efficiency of the electric plants. The crisis showed great dependence of Unites States and other western countries on oil price and led to greater interest interest in renewable energy and induced research in solar and wind power. Petroleum consumption for electricity at 1970 was roughly 15%." [3] The Oil Crisis alone created a spike in Electricity Prices, and companies were pushed toward renewable electricity. [see @Rus] 
+
+## 1980's
+The United States however adopted the Fuel Use Act in 1980 that prohibited new electric generators from using petroleum because it is a nonrenewable resource. This led to cleaner and more efficient means of generating electricity and prices stabilized for a decade.[see @Rus] 
+
+## 2000's
+In the new millenium, the Clean Air Act of 1992 took affect and the sight of new improvements to electrity production was in full swing. Electricity Prices rose to back the corperations that generate power to fund these innovative plans. After a decade, the Electricity economy finally stabilized and prices stayed constant.[see @Rus]
+
+## Result
+
+In Conclusion, the major influxes of Electricity Prices can be explained. After visualization of the influxes, recently, it seems that prices inflate as new acts are imposed on electric companies and their attempts to work with these acts. However, the influxes from earlier in the 1900's was due to scarcity of coal resources. Any deflations in price is usually shown by electric companies finally catching the trend and stabilizing the electric sector of the economy.
+
+## Improvements
+
+Adding another factor such as inflation of the United States dollar bill would show error accuracy better than this model.
+
+# References
+

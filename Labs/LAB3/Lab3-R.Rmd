@@ -1,0 +1,163 @@
+---
+title: "Lab3-R"
+author: "Clayton Glenn"
+date: "January 29, 2018"
+output:
+  pdf_document: default
+  word_document:
+    toc: yes
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 5
+    number_sections: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Task 1
+## Get Working Directory
+```{r}
+getwd()
+```
+
+
+# Task 2
+## Read Data from the Data File and Show the First 5 Lines
+```{r}
+spruce.df <- read.table("SPRUCE.csv", header = TRUE, sep = ",")
+head(spruce.df)
+```
+
+
+# Task 3
+## Scatter Plot of Data with X(Breast height Diameter) and Y(Height)
+```{r}
+with(spruce.df, {
+  plot(Height ~ BHDiameter, bg = "Blue", pch = 21, cex = 1.2, 
+  ylim = c(0, 1.1*max(Height)), xlim = c(0, 1.1*max(BHDiameter)))
+} )
+```
+
+According to the Scatter Plot, a Straight Line isn't likely to fit the data.
+
+## S20X TrendScatter Plot of Height V BHDiameter
+```{r}
+library(s20x)
+with(spruce.df, {
+  layout(matrix(1:3, nr = 3))
+  trendscatter(Height ~ BHDiameter,f=0.5)
+  trendscatter(Height ~ BHDiameter,f=0.6)
+  trendscatter(Height ~ BHDiameter,f=0.7)
+})
+```
+
+## Scatter Plot W/ Regression Line of Height V BHDiameter
+```{r}
+spruce.lm <- with(spruce.df, lm(Height~BHDiameter))
+with(spruce.df,
+  plot(Height ~ BHDiameter, bg = "Blue", pch = 21, ylim = c(0, 1.1*max(Height)), 
+  xlim = c(0, 1.1*max(BHDiameter)))
+)
+abline(spruce.lm)
+```
+
+The data group follows a curve with a negative slope that tend towards zero. 
+Therefore the data does not fit a straight line, instead, a smooth curve would fit the data better.
+
+
+# Task 4
+
+## Calculations of YHAT, MSS, TSS, and RSS
+```{r}
+yhat <- with(spruce.df,predict(spruce.lm,data.frame(BHDiameter)))
+MSS <- with(spruce.df,sum((yhat-mean(Height))^2))
+TSS <- with(spruce.df,sum((Height-mean(Height))^2))
+RSS <- with(spruce.df,sum((Height-yhat)^2))
+```
+
+## Scatter Plots w/ Regression, Mean, and Expected
+```{r}
+with(spruce.df, {
+  layout(matrix(1:4,nr=2,nc=2,byrow=TRUE))
+  
+  plot(Height~BHDiameter,bg="Blue",pch=21,ylim=c(0,1.1*max(Height)),xlim=c(0,1.1*max(BHDiameter)))
+  abline(spruce.lm)
+  mtext("Linear Model")
+  
+  plot(Height~BHDiameter,bg="Blue",pch=21,ylim=c(0,1.1*max(Height)),xlim=c(0,1.1*max(BHDiameter)))
+  segments(BHDiameter,Height,BHDiameter,yhat)
+  abline(spruce.lm)
+  mtext("Diff between Point and Expected")
+  
+  plot(Height~BHDiameter,bg="Blue",pch=21,ylim=c(0,1.1*max(Height)),xlim=c(0,1.1*max(BHDiameter)))
+  abline(spruce.lm)
+  abline(h=mean(Height))
+  segments(BHDiameter,mean(Height),BHDiameter,yhat,col="Red")
+  mtext("Diff between Linear Model and Mean")
+  
+  plot(Height~BHDiameter,bg="Blue",pch=21,ylim=c(0,1.1*max(Height)),xlim=c(0,1.1*max(BHDiameter)))
+  abline(h=mean(Height))
+  segments(BHDiameter,Height,BHDiameter,mean(Height),col="Green")
+  mtext("Diff between Point and Mean")
+})
+```
+
+## Show All Sums of Squares and Calculations
+```{r}
+TSS
+MSS
+RSS
+MSS/TSS
+MSS+RSS
+```
+
+Total does in Fact Equal the Sum of Model and Residual.
+Total Sum of Squares / Model Sum of Squares is the slope of the Linear Model.
+
+
+# Task 5
+## Summary of Linear Model
+```{r}
+summary(spruce.lm)
+```
+
+Value of Slope is .6569.
+Value of Intercept is 9.14684.
+The equation of the Fitted Line is y=.6569x+9.14684.
+
+## Coefficients of Linear Model
+```{r}
+coef(spruce.lm)
+```
+
+## Regression Analysis
+```{r}
+anova(spruce.lm)
+```
+
+## Predict Height @ 15, 18, 20
+```{r}
+predict(spruce.lm, data.frame(BHDiameter=c(15,18,20)))
+```
+
+
+# Task 6
+## GGPLOT of Data, Height V BHDiameter W/ Regression
+```{r}
+library(ggplot2)
+  g <- ggplot(spruce.df, aes(x=BHDiameter,y=Height,colour=BHDiameter))
+  g <- g+geom_point() + geom_line()+ geom_smooth(method="lm")
+  g+ggtitle("Height Vs BHDiameter")
+```
+
+
+
+
+
+
+

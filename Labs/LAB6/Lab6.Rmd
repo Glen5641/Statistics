@@ -1,0 +1,588 @@
+---
+title: "Lab6-RMD"
+author: "Clayton Glenn"
+date: "February 22, 2018"
+output:
+  word_document:
+    toc: yes
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 5
+    number_sections: yes
+    toc: yes
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Task 1
+
+##Get working Directory
+```{r}
+getwd()
+```
+
+
+
+#Task 2
+
+##4 Plots of the norms
+```{r}
+layout(matrix(1:4, nr = 2, nc = 2))
+
+###Normal Density with mu = 10 and sd = 4
+curve(dnorm(x, mean = 10, sd =   4),
+      xlim = c(-10, 30),
+      ylab = "Normal Distribution")
+
+###Normal Density with mu = 10 and sd = 2
+curve(dnorm(x, mean = 10, sd =   2),
+      xlim = c(-10, 30),
+      ylab = "Normal Distribution")
+
+###Normal Density with mu = 5 and sd = 10
+curve(dnorm(x, mean =  5, sd =  10),
+      xlim = c(-30, 40),
+      ylab = "Normal Distribution")
+
+###Normal Density with mu = 5 and sd = .5
+curve(dnorm(x, mean =  5, sd = 1 / 2),
+      xlim = c(-10, 30),
+      ylab = "Normal Distribution")
+```
+
+##Plot the norms and show probability
+
+###Plot the norm of mean = 0 and sd = 1 and show probability of 2:30
+```{r}
+curve(
+  dnorm(x, mean = 0, sd = 1),
+  xlim = c(-4, 4),
+  ylab = "Normal Distribution",
+  main = "Mean = 0, Standard Deviation = 1"
+)
+xcurve = seq(2, 30, length = 1000)
+ycurve = dnorm(xcurve, mean = 0, sd = 1)
+polygon(c(2, xcurve, 30), c(0, ycurve, 0), col = "Red")
+prob = pnorm(30, mean = 0, sd = 1) - pnorm(2, mean = 0, sd = 1)
+prob = round(prob, 4)
+text(x = 0,
+     y = 1 / 2 * dnorm(0, 0, 1),
+     paste("Area = ", prob, sep = ""))
+```
+
+###Plot the norm of mean = 4 and sd = 2 and show probability of 1:5
+```{r}
+curve(
+  dnorm(x, mean = 4, sd = 2),
+  xlim = c(-10, 20),
+  ylab = "Normal Distribution",
+  main = "Mean = 4, Standard Deviation = 2"
+)
+xcurve = seq(1, 5, length = 1000)
+ycurve = dnorm(xcurve, mean = 4, sd = 2)
+polygon(c(1, xcurve, 5), c(0, ycurve, 0), col = "Red")
+prob = pnorm(5, mean = 4, sd = 2) - pnorm(1, mean = 4, sd = 2)
+prob = round(prob, 4)
+text(x = 4,
+     y = 1 / 2 * dnorm(4, 4, 2),
+     paste("Area = ", prob, sep = ""))
+```
+
+###Plot the norm of mean = 10 and sd = 4 and show probability of -30:10
+```{r}
+curve(
+  dnorm(x, mean = 10, sd = 4),
+  xlim = c(-10, 30),
+  ylab = "Normal Distribution",
+  main = "Mean = 10, Standard Deviation = 4"
+)
+xcurve = seq(-30, 10, length = 1000)
+ycurve = dnorm(xcurve, mean = 10, sd = 4)
+polygon(c(-30, xcurve, 10), c(0, ycurve, 0), col = "Red")
+prob = pnorm(10, mean = 10, sd = 4) - pnorm(-30, mean = 10, sd = 4)
+prob = round(prob, 4)
+text(x = 10,
+     y = 1 / 2 * dnorm(10, 10, 4),
+     paste("Area = ", prob, sep = ""))
+```
+
+###Plot the norm of mean = -2 and sd = 0.5 and show probability of -3:-2
+```{r}
+curve(
+  dnorm(x, mean = -2, sd = 1 / 2),
+  xlim = c(-4, 0),
+  ylab = "Normal Distribution",
+  main = "Mean = -2, Standard Deviation = 1/2"
+)
+xcurve = seq(-3, -2, length = 1000)
+ycurve = dnorm(xcurve, mean = -2, sd = 1 / 2)
+polygon(c(-3, xcurve, -2), c(0, ycurve, 0), col = "Red")
+prob = pnorm(-2, mean = -2, sd = 1 / 2) - pnorm(-3, mean = -2, sd = 1 / 2)
+prob = round(prob, 4)
+text(x = -2,
+     y = 1 / 2 * dnorm(-2, -2, 1 / 2),
+     paste("Area = ", prob, sep = ""))
+```
+
+
+
+
+#Task 3
+
+##Plot the Gamma Distribution
+
+###Plot the gamma with shape = 1 and scale = 1
+```{r}
+curve(
+  dgamma(x, shape = 1, scale = 1),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  col = "Red",
+  lwd = 2,
+  ylab = "Gamma Density",
+  main = "Beta = 1"
+)
+text(x = 2, y = 0.8, paste("Alpha = ", 1))
+
+###Plot the gamma with shape = 3 and scale = 1
+curve(
+  dgamma(x, shape = 3, scale = 1),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  add = TRUE,
+  lwd = 2
+)
+text(x = 3, y = 0.4, paste("Alpha = ", 3))
+
+###Plot the gamma with shape = 5 and scale = 1
+curve(
+  dgamma(x, shape = 5, scale = 1),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  add = TRUE,
+  col = "Blue",
+  lwd = 2
+)
+text(x = 5, y = 0.3, paste("Alpha = ", 5))
+```
+
+##Gamma Plots with Probabilities
+
+###Plot the gamma with shape = 3 and scale = 2 and show probability of 2:5
+```{r}
+curve(
+  dgamma(x, shape = 3, scale = 2),
+  xlim = c(-5, 20),
+  ylim = c(0, .5),
+  col = "Red",
+  lwd = 2,
+  ylab = "Gamma Density",
+  main = "Alpha = 3, Beta = 2"
+)
+xcurve = seq(2, 5, length = 1000)
+ycurve = dgamma(xcurve, shape = 3, scale = 2)
+polygon(c(2, xcurve, 5), c(0, ycurve, 0), col = "Red")
+prob = pgamma(5, shape = 3, scale = 2) - pgamma(2, shape = 3, scale = 2)
+prob = round(prob, 4)
+text(
+  x = (2 + 5) / 2,
+  y = 2 * dgamma(3, shape = 3, scale = 2),
+  paste("Area = ", prob, sep = "")
+)
+```
+
+###Plot the gamma with shape = 6 and scale = 3 and show probability of 1:4
+```{r}
+curve(
+  dgamma(x, shape = 6, scale = 3),
+  xlim = c(0, 10),
+  ylim = c(0, .1),
+  col = "Red",
+  lwd = 2,
+  ylab = "Gamma Density",
+  main = "Alpha = 6, Beta = 3"
+)
+xcurve = seq(1, 4, length = 1000)
+ycurve = dgamma(xcurve, shape = 6, scale = 3)
+polygon(c(1, xcurve, 4), c(0, ycurve, 0), col = "Red")
+prob = pgamma(4, shape = 6, scale = 3) - pgamma(1, shape = 6, scale = 3)
+prob = round(prob, 4)
+text(
+  x = (1 + 4) / 2,
+  y = 2 * dgamma(6, shape = 6, scale = 3),
+  paste("Area = ", prob, sep = "")
+)
+```
+
+###Plot the gamma with shape = 2 and scale = 4 and show probability of 3:6
+```{r}
+curve(
+  dgamma(x, shape = 2, scale = 4),
+  xlim = c(0, 10),
+  ylim = c(0, .2),
+  col = "Red",
+  lwd = 2,
+  ylab = "Gamma Density",
+  main = "Alpha = 2, Beta = 4"
+)
+xcurve = seq(3, 6, length = 1000)
+ycurve = dgamma(xcurve, shape = 2, scale = 4)
+polygon(c(3, xcurve, 6), c(0, ycurve, 0), col = "Red")
+prob = pgamma(6, shape = 2, scale = 4) - pgamma(3, shape = 2, scale = 4)
+prob = round(prob, 4)
+text(
+  x = (3 + 6) / 2,
+  y = 2 * dgamma(2, shape = 2, scale = 4),
+  paste("Area = ", prob, sep = "")
+)
+```
+
+
+
+
+#Task 4
+
+##4 Plots of Chisq Density
+```{r}
+layout(matrix(1:4, nr = 2, nc = 2))
+
+###Plot of Chisq Density with Degrees of Freedom = 1
+curve(
+  dchisq(x, df = 1),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Chisq Density",
+  main = "DF = 1"
+)
+
+###Plot of Chisq Density with Degrees of Freedom = 2
+curve(
+  dchisq(x, df = 2),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Chisq Density",
+  main = "DF = 2"
+)
+
+###Plot of Chisq Density with Degrees of Freedom = 4
+curve(
+  dchisq(x, df = 4),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Chisq Density",
+  main = "DF = 4"
+)
+
+###Plot of Chisq Density with Degrees of Freedom = 20
+curve(
+  dchisq(x, df = 20),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Chisq Density",
+  main = "DF = 20"
+)
+```
+
+##Plot Chisq Density With Probabilities
+
+###Plot of Chisq Density with Degrees of Freedom = 2 and show probability of 2:4
+```{r}
+curve(
+  dchisq(x, df = 2),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Chisq Density",
+  main = "Degrees of Freedom = 2"
+)
+xcurve = seq(2, 4, length = 1000)
+ycurve = dchisq(xcurve, df = 2)
+polygon(c(2, xcurve, 4), c(0, ycurve, 0), col = "Red")
+prob = pchisq(4, df = 2) - pchisq(2, df = 2)
+prob = round(prob, 4)
+text(x = (2 + 4) / 2,
+     y = 2 * dchisq(2, df = 2),
+     paste("Area = ", prob, sep = ""))
+```
+
+###Plot of Chisq Density with Degrees of Freedom = 3 and show probability of 3:5
+```{r}
+curve(
+  dchisq(x, df = 3),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Chisq Density",
+  main = "Degrees of Freedom = 3"
+)
+xcurve = seq(3, 5, length = 1000)
+ycurve = dchisq(xcurve, df = 3)
+polygon(c(3, xcurve, 5), c(0, ycurve, 0), col = "Red")
+prob = pchisq(5, df = 3) - pchisq(3, df = 3)
+prob = round(prob, 4)
+text(x = (3 + 5) / 2,
+     y = 2 * dchisq(3, df = 3),
+     paste("Area = ", prob, sep = ""))
+```
+
+###Plot of Chisq Density with Degrees of Freedom = 20 and show probability of 10:21
+```{r}
+curve(
+  dchisq(x, df = 20),
+  xlim = c(0, 25),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Chisq Density",
+  main = "Degrees of Freedom = 20"
+)
+xcurve = seq(10, 21, length = 1000)
+ycurve = dchisq(xcurve, df = 20)
+polygon(c(10, xcurve, 21), c(0, ycurve, 0), col = "Red")
+prob = pchisq(21, df = 20) - pchisq(10, df = 20)
+prob = round(prob, 4)
+text(x = (10 + 21) / 2,
+     y = 2 * dchisq(10, df = 20),
+     paste("Area = ", prob, sep = ""))
+```
+
+
+
+
+#Task 5
+
+##Plots of Weibull Density with Probability
+
+###Plot of Weibull Density with shape = 2 and scale = 1 and show probability of 1:2
+```{r}
+curve(
+  dweibull(x, shape = 2, scale = 1),
+  xlim = c(0, 5),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Weibull Density",
+  main = "Alpha = 2, Beta = 1"
+)
+xcurve = seq(1, 2, length = 1000)
+ycurve = dweibull(xcurve, shape = 2, scale = 1)
+polygon(c(1, xcurve, 2), c(0, ycurve, 0), col = "Red")
+prob = pweibull(2, shape = 2, scale = 1) - pweibull(1, shape = 2, scale = 1)
+prob = round(prob, 4)
+text(
+  x = 3,
+  y = 2 * dweibull(1.5, shape = 2, scale = 1),
+  paste("Area = ", prob, sep = "")
+)
+```
+
+###Plot of Weibull Density with shape = 5 and scale = 4 and show probability of 3:5
+```{r}
+curve(
+  dweibull(x, shape = 5, scale = 4),
+  xlim = c(0, 10),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Weibull Density",
+  main = "Alpha = 5, Beta = 4"
+)
+xcurve = seq(3, 5, length = 1000)
+ycurve = dweibull(xcurve, shape = 5, scale = 4)
+polygon(c(3, xcurve, 5), c(0, ycurve, 0), col = "Red")
+prob = pweibull(5, shape = 5, scale = 4) - pweibull(3, shape = 5, scale = 4)
+prob = round(prob, 4)
+text(
+  x = 7,
+  y = 1 * dweibull(4, shape = 5, scale = 4),
+  paste("Area = ", prob, sep = "")
+)
+```
+
+###Plot of Weibull Density with shape = 4 and scale = 10 and show probability of 8:9
+```{r}
+curve(
+  dweibull(x, shape = 4, scale = 10),
+  xlim = c(0, 20),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Weibull Density",
+  main = "Alpha = 4, Beta = 10"
+)
+xcurve = seq(8, 9, length = 1000)
+ycurve = dweibull(xcurve, shape = 4, scale = 10)
+polygon(c(8, xcurve, 9), c(0, ycurve, 0), col = "Red")
+prob = pweibull(9, shape = 4, scale = 10) - pweibull(8, shape = 4, scale = 10)
+prob = round(prob, 4)
+text(
+  x = 8,
+  y = 2 * dweibull(8, shape = 4, scale = 10),
+  paste("Area = ", prob, sep = "")
+)
+```
+
+###Plot of Weibull Density with shape = 8 and scale = 8 and show probability of 7:9
+```{r}
+curve(
+  dweibull(x, shape = 8, scale = 8),
+  xlim = c(0, 15),
+  ylim = c(0, 1),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Weibull Density",
+  main = "Alpha = 8, Beta = 8"
+)
+xcurve = seq(7, 9, length = 1000)
+ycurve = dweibull(xcurve, shape = 8, scale = 8)
+polygon(c(7, xcurve, 9), c(0, ycurve, 0), col = "Red")
+prob = pweibull(9, shape = 8, scale = 8) - pweibull(7, shape = 8, scale = 8)
+prob = round(prob, 4)
+text(
+  x = 4,
+  y = 2 * dweibull(7, shape = 8, scale = 8),
+  paste("Area = ", prob, sep = "")
+)
+```
+
+
+
+
+#Task 6
+
+##Beta Plots with Distributions
+
+###Plot of Beta Density with shape1 = 2 and shape2 = 1 and show probability of 0:1
+```{r}
+curve(
+  dbeta(x, shape1 = 2, shape2 = 1),
+  xlim = c(0, 5),
+  ylim = c(0, 2),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Beta Density",
+  main = "Shape1 = 2, Shape2 = 1"
+)
+xcurve = seq(0, 1, length = 1000)
+ycurve = dbeta(xcurve, shape1 = 2, shape2 = 1)
+polygon(c(0, xcurve, 1), c(0, ycurve, 0), col = "Red")
+prob = pbeta(1, shape1 = 2, shape2 = 1) - pbeta(0, shape1 = 2, shape2 = 1)
+prob = round(prob, 4)
+text(x = 3,
+     y = 0.8,
+     paste("Area = ", prob, sep = ""))
+```
+
+###Plot of Beta Density with shape1 = 1 and shape2 = 2 and show probability of .5:1
+```{r}
+curve(
+  dbeta(x, shape1 = 1, shape2 = 2),
+  xlim = c(0, 5),
+  ylim = c(0, 2),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Beta Density",
+  main = "Shape1 = 1, Shape2 = 2"
+)
+xcurve = seq(.5, 1, length = 1000)
+ycurve = dbeta(xcurve, shape1 = 1, shape2 = 2)
+polygon(c(.5, xcurve, 1), c(0, ycurve, 0), col = "Red")
+prob = pbeta(1, shape1 = 1, shape2 = 2) - pbeta(.5, shape1 = 1, shape2 = 2)
+prob = round(prob, 4)
+text(x = 3,
+     y = 0.8,
+     paste("Area = ", prob, sep = ""))
+```
+
+###Plot of Beta Density with shape1 = 5 and shape2 = 10 and show probability of .3:.6
+```{r}
+curve(
+  dbeta(x, shape1 = 5, shape2 = 10),
+  xlim = c(0, 5),
+  ylim = c(0, 5),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Beta Density",
+  main = "Shape1 = 5, Shape2 = 10"
+)
+xcurve = seq(.3, .6, length = 1000)
+ycurve = dbeta(xcurve, shape1 = 5, shape2 = 10)
+polygon(c(.3, xcurve, .6), c(0, ycurve, 0), col = "Red")
+prob = pbeta(.6, shape1 = 5, shape2 = 10) - pbeta(.3, shape1 = 5, shape2 = 10)
+prob = round(prob, 4)
+text(x = 3,
+     y = 0.8,
+     paste("Area = ", prob, sep = ""))
+```
+
+###Plot of Beta Density with shape1 = 10 and shape2 = 5 and show probability of 0:.5
+```{r}
+curve(
+  dbeta(x, shape1 = 10, shape2 = 5),
+  xlim = c(0, 5),
+  ylim = c(0, 5),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Beta Density",
+  main = "Shape1 = 10, Shape2 = 5"
+)
+xcurve = seq(0, .5, length = 1000)
+ycurve = dbeta(xcurve, shape1 = 10, shape2 = 5)
+polygon(c(0, xcurve, .5), c(0, ycurve, 0), col = "Red")
+prob = pbeta(.5, shape1 = 10, shape2 = 5) - pbeta(0, shape1 = 10, shape2 = 5)
+prob = round(prob, 4)
+text(x = 3,
+     y = 0.8,
+     paste("Area = ", prob, sep = ""))
+```
+
+
+
+
+#Task 7
+
+##Homemade function to take alpha and beta values to create an exponential plot
+```{r}
+myexp = function(x, a, b) {
+  (a / b) * '^'(2.71828183,-(a * x / b))
+}
+
+##Show Both plots side by side to compare all x values
+layout(matrix(1:2, nr = 1, nc = 2))
+
+###Gamma->Exponential with 2:3
+curve(
+  myexp(x, 2, 3),
+  xlim = c(0, 5),
+  ylim = c(0, 5),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Gamma->Exponential Density",
+  main = "Alpha = 2, Beta = 3"
+)
+
+###Exponential with rate 2/3
+curve(
+  dexp(x, rate = 2 / 3),
+  xlim = c(0, 5),
+  ylim = c(0, 5),
+  col = "Blue",
+  lwd = 2,
+  ylab = "Exponential Density",
+  main = "Rate = 2/3"
+)
+```

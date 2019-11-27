@@ -1,0 +1,176 @@
+---
+title: "Lab4"
+author: "Clayton Glenn"
+date: "February 12, 2018"
+output:
+  word_document:
+    toc: yes
+  pdf_document: default
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 5
+    number_sections: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+#Task 1
+##Get Working Directory
+```{r}
+getwd()
+```
+
+
+
+#Task 2
+##Read Spruce Data File and Show Tail of Data
+```{r}
+spruce.df <- read.csv("SPRUCE.csv", header=TRUE) 
+tail(spruce.df)
+```
+
+
+
+#Task 3
+##Trend Scatter of Height V BHD
+```{r}
+library(s20x)
+trendscatter(Height ~ BHDiameter, f = 0.5, data = spruce.df)
+```
+
+##Store Linear Model, Res, and Fit
+```{r}
+spruce.lm <- lm(Height ~ BHDiameter, data = spruce.df)
+height.res <- residuals(spruce.lm)
+height.fit <- fitted(spruce.lm)
+```
+
+##Plot of Res v Fit
+```{r}
+plot(height.res ~ height.fit)
+```
+
+##Trend Scatter of Res v Fit
+```{r}
+library(s20x)
+trendscatter(height.res ~ height.fit)
+```
+
+##Plot Residuals V Fitted with LM
+```{r}
+plot(spruce.lm, which =1)
+```
+
+##Norm Check of Linear Model with Shapiro Walk
+```{r}
+library(s20x)
+normcheck(spruce.lm,shapiro.wilk = TRUE)
+```
+
+
+
+#Task 4
+##Create Height v BHD Plot with new Quad Curve
+```{r}
+quad.lm=lm(Height~BHDiameter + I(BHDiameter^2),data=spruce.df)
+myplot=function(x){
+  quad.lm$coef[1] +quad.lm$coef[2]*x  + quad.lm$coef[3]*x^2
+}
+plot(Height~BHDiameter, data = spruce.df)
+curve(myplot, lwd=2, col="steelblue",add=TRUE)
+```
+
+##Storing Res and Fit Variables
+```{r}
+quad.fit <- fitted(quad.lm)
+quad.res <- residuals(quad.lm)
+```
+
+##Plot with Quadratic Residuals v Fitted Values
+```{r}
+plot(quad.res ~ quad.fit)
+```
+
+##Quadratic Norm Check and Shapiro
+```{r}
+normcheck(quad.lm,shapiro.wilk = TRUE)
+```
+
+
+
+#Task 5
+##Summary of Quadratic Model
+```{r}
+summary(quad.lm)
+```
+
+##Coefficients of Quad.lm
+```{r}
+quad.lm$coef[1]
+quad.lm$coef[2]
+quad.lm$coef[3]
+```
+
+##Predict 15,18,and 20 using Linear Model
+```{r}
+predict(spruce.lm, data.frame(BHDiameter=c(15,18,20)))
+```
+
+##Predict 15,18,and 20 using Quadratic Model
+```{r}
+predict(quad.lm, data.frame(BHDiameter=c(15,18,20)))
+```
+
+##Prediction of all Spruce Heights with Quad.lm
+```{r}
+with(spruce.df,predict(quad.lm,data.frame(BHDiameter)))
+```
+
+##Multiple R^2 Quadratic Fitted Values
+```{r}
+(with(spruce.df, sum((Height-mean(Height))^2))-with(spruce.df, sum((Height-quad.fit)^2)))/with(spruce.df, sum((Height-mean(Height))^2))
+```
+
+##Multiple R^2 Linear Fitted Values
+```{r}
+(with(spruce.df, sum((Height-mean(Height))^2))-with(spruce.df, sum((Height-height.fit)^2)))/with(spruce.df, sum((Height-mean(Height))^2))
+```
+
+##Compare Quad.lm and Spruce.lm with Anova
+```{r}
+anova(spruce.lm,quad.lm)
+anova(quad.lm)
+anova(spruce.lm)
+```
+
+##RSS, MSS, TSS, and MSS/TSS Calculations
+```{r}
+RSS <- with(spruce.df, sum((Height-quad.fit)^2))
+MSS <- with(spruce.df, sum((quad.fit-mean(Height))^2))
+TSS <- with(spruce.df, sum((Height-mean(Height))^2))
+RSS
+MSS
+TSS
+MSS/TSS
+```
+
+
+
+#Task 6
+##Cooks Plot of Quadratic Linear Model
+```{r}
+library(s20x)
+cooks20x(quad.lm)
+```
+
+##Summary of Quadratic Linear Model Excluding 24th Datum
+```{r}
+quad2.lm=lm(Height~BHDiameter + I(BHDiameter^2) , data=spruce.df[-24,])
+summary(quad2.lm)
+```

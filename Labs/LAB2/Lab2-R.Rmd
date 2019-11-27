@@ -1,0 +1,108 @@
+---
+title: "Lab2-R"
+author: "Clayton Glenn"
+date: "January 22, 2018"
+output:
+  word_document:
+    toc: yes
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 5
+    number_sections: yes
+    toc: yes
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# TASKS
+
+## Task 1
+
+### Show Working Directory
+```{r}
+getwd()
+```
+
+
+
+## Task 2
+
+### Read Data File
+```{r read data}
+mpg.df=read.table("EPAGAS.csv",header=TRUE,sep=",")
+head(mpg.df)
+```
+
+
+
+## Task 3
+
+### Create Z vector from MPG
+```{r z vector}
+mpg=mpg.df$MPG
+z=scale(mpg)
+class(z)
+```
+
+### Verify Z-BAR and S^2vZ
+```{r Z-Bar and S2}
+apply(z,2,mean)
+apply(z,2,sd)
+```
+
+### Find the values of mpg that are possible outliers
+```{r Possible Outliers}
+mpg[abs(z)>=2 & abs(z)<=3]
+```
+
+### Find the values of mpg that defined as outliers
+```{r Outliers}
+mpg[abs(z)>3]
+```
+
+### Lattice Dotplot with outliers and possible outliers 
+
+```{r MPG DotPlot}
+mycol = ifelse(abs(z)>3, "Red",
+        ifelse(abs(z)>=2 &abs(z)<=3,"Blue", "Black"))  
+library(lattice)
+dotplot(mpg,col=mycol)
+```
+
+
+
+## Task 4
+
+### Boxplot of MPG
+```{r MPG BoxPlot}
+boxplot(mpg, data=mpg, notch=TRUE, col=(c("green3")), main="Miles Per Gallon", horizontal = TRUE)
+```
+
+### Exact Proportion Within 2 STD's of the Mean.
+
+```{r Actual Proportion}
+sprintf("%.0f%%", length(mpg[abs(z)<2])/length(mpg) * 100)
+```
+
+### Chebyshev's Theorum
+
+(1 - 1/(#)^2) of the Data lies within 2 STD's
+
+```{r Chebyshevs Theorum}
+sprintf("%.0f%%", (1 - 1/2^2)*100)
+```
+
+According to the theorum, ATLEAST 75% of the data lies within 2 STD's. In this case 96% of the lies within 2 STD's, so Chevyshev's theorum is correct and does agree with the data.
+
+### Empirical Rule
+
+Approximately 95% of Data lies within 2 STD's of the Mean
+```{r Empirical Rule}
+sprintf("%.0f%%", 95)
+```
+
+The Empirical Rule responds very well to the data, due to the fact that the rule states that APPROXIMATELY 95% of the data lies within 2 STD's and according to the actual proportion of data, which is 96%, the Eprical Rule is a very close estimate to the real proportion.

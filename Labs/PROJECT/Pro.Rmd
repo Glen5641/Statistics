@@ -1,0 +1,37 @@
+---
+title: "PROJECT"
+author: "Clayton Glenn"
+date: "February 5, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+RES.df=read.table("RESPRICES.csv",header=TRUE,sep=",")
+head(RES.df)
+  
+
+
+01145+-
+  -+
+  ```
+
+```{r}
+RES.lm <- with(RES.df, lm(RESNOM ~ YEAR))
+with(RES.df, {
+  plot(RESNOM ~ YEAR)
+} )
+abline(RES.lm)
+```
+
+```{r}
+quad.lm <- lm(formula = RESNOM ~ YEAR + I(RESNOM^2), data = RES.df)
+```
+
+```{r}
+
+```
+

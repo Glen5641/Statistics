@@ -1,0 +1,180 @@
+---
+title: "Lab1-R"
+author: "Clayton Glenn"
+date: "January 18, 2018"
+output:
+  pdf_document: default
+  word_document:
+    toc: yes
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 5
+    number_sections: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Tasks
+
+## Task 1
+
+### Get Working Directory
+```{r task1 getwd}
+getwd()
+```
+
+
+
+## Task 2
+
+### Read DDT into Data Frame Object
+```{r task2 read}
+ddt <- read.csv("DDT.csv", header = TRUE)
+head(ddt)
+```
+
+
+
+## Task 3
+
+### What are the qualitative variables in "ddt"?
+#### River and Species
+### What are the quantitative variables in "ddt"?
+#### Mile, Length, Weight, and DDT
+### How many SPECIES are in the ddt data set?
+#### 3 Species
+
+
+### Subset of DDT With Large Mouth Bass and Weight > 800
+```{r task3 subset lmb & w}
+lmb800 <- subset(ddt, (SPECIES=="LMBASS" & WEIGHT > 800))
+show(lmb800)
+```
+
+
+### Subset of DDT With SCM and DDT > 4.0
+```{r task3 subset scm & ddt}
+scmddt <- subset(ddt, (RIVER=="SCM" & DDT > 4.0))
+show(scmddt)
+```
+
+
+
+## Task 4
+
+### Table of Rivers
+```{r task4 table rivers}
+rT <- with(ddt, table(RIVER))
+show(rT)
+```
+
+
+### Barplot of Rivers
+```{r task4 river barplot}
+rB <- barplot(rT, beside=TRUE, col=1:4)
+show(rB)
+```
+
+
+### Table of Rivers Crossed With Species
+```{r task4 river cross species}
+rsT <- with(ddt, table(RIVER, SPECIES))
+show(rsT)
+```
+
+
+### Barplot of Rivers Crossed With Species
+```{r task4 river cross species barplot}
+rcsB <- barplot(rsT, beside=TRUE, col=1:4)
+show(rcsB)
+```
+
+
+
+## Task 5
+
+### PieCharts of Species and Rivers
+```{r species river piecharts}
+sT <- with(ddt, table(SPECIES))
+layout(matrix(c(1, 2),nr=1,nc=2))
+pie(sT)
+pie(rT)
+```
+
+
+
+## Task 6
+
+### BoxPlots of DDT, Weight, and Length
+```{r ddt, w, l boxplots}
+layout(matrix(c(1,2,3),nr=1,nc=3))
+with(ddt,boxplot(LENGTH,ylab="DDT",col="Blue",notch=TRUE))
+with(ddt,boxplot(WEIGHT,ylab="WEIGHT",col="Green",notch=TRUE))
+with(ddt,boxplot(MILE,ylab="LENGTH",col="Red",notch=TRUE))
+```
+
+
+
+## Task 7
+
+### Coplot of Length V Weight Given River
+```{r l v w give river coplot}
+lwC <- coplot(LENGTH ~ WEIGHT | RIVER, ddt, col = 1:5)
+```
+
+
+### Coplot of DDT V Weight Given Species
+```{r ddt v w give species coplot}
+dwC <- coplot(DDT ~ WEIGHT | SPECIES, ddt, col = 1:4)
+```
+
+
+
+
+## Task 8
+
+### ggplot Box Plot Given Species and Weight
+```{r ggbox give species w}
+library(ggplot2)
+swgg <- ggplot(ddt, aes(x=SPECIES, y=WEIGHT, color=RIVER, fill = RIVER))
+swgg <- swgg + geom_boxplot(colour = "#1F3552")
+swgg <- swgg + ggtitle("Clayton Glenn")
+show(swgg)
+```
+
+
+### Violin Plot given River and Length
+```{r ggviolin give river l}
+library(ggplot2)
+rlgg <- ggplot(ddt, aes(x=RIVER, y=LENGTH, color=SPECIES, fill = SPECIES))
+rlgg <- rlgg + geom_violin(colour = "#1F3552")
+rlgg <- rlgg + ggtitle("Clayton Glenn")
+show(rlgg)
+```
+
+
+### gg Scatter Plot given Weight and Length
+```{r ggscatter give w l}
+library(ggplot2)
+ggplot(ddt, aes(x=WEIGHT, y=LENGTH, color=SPECIES, fill = SPECIES)) + geom_point() + ggtitle("Clayton Glenn")
+```
+
+
+
+
+# Clicker Questions
+## Length Mean
+```{r get mean}
+mean(ddt$LENGTH)
+```
+
+## Weight Standard Deviation
+```{r get standard deviation}
+sd(ddt$LENGTH)
+```
